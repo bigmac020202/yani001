@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Para Karolainny</title>
     <style>
         body {
@@ -15,29 +15,46 @@
             background-color: #ffe6f2;
             overflow: hidden;
             transition: background-color 0.5s;
+            touch-action: manipulation;
         }
         
         #name {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #ff66b3;
             cursor: pointer;
             position: absolute;
             transition: all 0.3s;
             user-select: none;
+            text-align: center;
+            padding: 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        @media (min-width: 768px) {
+            #name {
+                font-size: 3rem;
+            }
         }
         
         #message {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #ff3399;
             text-align: center;
             display: none;
             flex-direction: column;
             align-items: center;
+            padding: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            #message {
+                font-size: 2rem;
+            }
         }
         
         .hearts {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-top: 20px;
             animation: float 3s ease-in-out infinite;
         }
@@ -82,10 +99,12 @@
             '#f2fff5', '#fff9f2', '#f9f2ff', '#f2f9f9'
         ];
         
-        // Posições aleatórias
+        // Posições aleatórias (considerando tamanho do elemento)
         function getRandomPosition() {
-            const x = Math.random() * (window.innerWidth - 200);
-            const y = Math.random() * (window.innerHeight - 100);
+            const maxX = window.innerWidth - nameElement.offsetWidth - 40;
+            const maxY = window.innerHeight - nameElement.offsetHeight - 40;
+            const x = Math.max(20, Math.random() * maxX);
+            const y = Math.max(20, Math.random() * maxY);
             return { x, y };
         }
         
@@ -104,8 +123,8 @@
             }
         }
         
-        // Quando o mouse passa sobre o nome
-        nameElement.addEventListener('mouseover', () => {
+        // Função para lidar com toque/clique
+        function handleInteraction() {
             count++;
             
             if (count <= maxCount) {
@@ -122,10 +141,18 @@
                 messageElement.style.display = 'flex';
                 generateHearts();
                 
-                // Efeito de confete
+                // Efeito de fundo especial
                 body.style.background = 'radial-gradient(circle, #ffccdd, #ffb3d9)';
             }
-        });
+        }
+        
+        // Adiciona eventos para desktop e mobile
+        nameElement.addEventListener('mouseover', handleInteraction);
+        nameElement.addEventListener('click', handleInteraction);
+        nameElement.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Previne comportamento padrão do toque
+            handleInteraction();
+        }, { passive: false });
         
         // Posição inicial centralizada
         window.addEventListener('load', () => {
@@ -135,6 +162,21 @@
             };
             nameElement.style.left = `${initialPos.x}px`;
             nameElement.style.top = `${initialPos.y}px`;
+        });
+        
+        // Redimensionamento da janela
+        window.addEventListener('resize', () => {
+            if (count <= maxCount && nameElement.style.display !== 'none') {
+                const currentX = parseFloat(nameElement.style.left);
+                const currentY = parseFloat(nameElement.style.top);
+                
+                // Ajusta a posição se estiver fora da tela após redimensionamento
+                const maxX = window.innerWidth - nameElement.offsetWidth - 20;
+                const maxY = window.innerHeight - nameElement.offsetHeight - 20;
+                
+                nameElement.style.left = `${Math.min(currentX, maxX)}px`;
+                nameElement.style.top = `${Math.min(currentY, maxY)}px`;
+            }
         });
     </script>
 </body>
