@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Karolainny</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe6f2;
+            overflow: hidden;
+            transition: background-color 0.5s;
+        }
+        
+        #name {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff66b3;
+            cursor: pointer;
+            position: absolute;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        #message {
+            font-size: 2rem;
+            color: #ff3399;
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .hearts {
+            font-size: 2rem;
+            margin-top: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .heart {
+            display: inline-block;
+            animation: heartBeat 1s infinite;
+            margin: 0 5px;
+            color: #ff0066;
+        }
+        
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+    </style>
+</head>
+<body>
+    <div id="name">Karolainny</div>
+    <div id="message">
+        você é fofa ❤
+        <div class="hearts" id="hearts"></div>
+    </div>
+
+    <script>
+        const nameElement = document.getElementById('name');
+        const messageElement = document.getElementById('message');
+        const heartsElement = document.getElementById('hearts');
+        const body = document.body;
+        
+        let count = 0;
+        const maxCount = 10;
+        
+        // Cores de fundo aleatórias suaves
+        const colors = [
+            '#ffe6f2', '#ffecf2', '#fff2f2', '#f2f9ff', 
+            '#f2fff5', '#fff9f2', '#f9f2ff', '#f2f9f9'
+        ];
+        
+        // Posições aleatórias
+        function getRandomPosition() {
+            const x = Math.random() * (window.innerWidth - 200);
+            const y = Math.random() * (window.innerHeight - 100);
+            return { x, y };
+        }
+        
+        // Gerar corações
+        function generateHearts() {
+            const heartCount = 30;
+            heartsElement.innerHTML = '';
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                heart.style.fontSize = `${Math.random() * 2 + 1}rem`;
+                heartsElement.appendChild(heart);
+            }
+        }
+        
+        // Quando o mouse passa sobre o nome
+        nameElement.addEventListener('mouseover', () => {
+            count++;
+            
+            if (count <= maxCount) {
+                // Muda a posição
+                const newPos = getRandomPosition();
+                nameElement.style.left = `${newPos.x}px`;
+                nameElement.style.top = `${newPos.y}px`;
+                
+                // Muda a cor de fundo
+                body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            } else if (count === maxCount + 1) {
+                // Mostra a mensagem final
+                nameElement.style.display = 'none';
+                messageElement.style.display = 'flex';
+                generateHearts();
+                
+                // Efeito de confete
+                body.style.background = 'radial-gradient(circle, #ffccdd, #ffb3d9)';
+            }
+        });
+        
+        // Posição inicial centralizada
+        window.addEventListener('load', () => {
+            const initialPos = {
+                x: (window.innerWidth - nameElement.offsetWidth) / 2,
+                y: (window.innerHeight - nameElement.offsetHeight) / 2
+            };
+            nameElement.style.left = `${initialPos.x}px`;
+            nameElement.style.top = `${initialPos.y}px`;
+        });
+    </script>
+</body>
+</html>
